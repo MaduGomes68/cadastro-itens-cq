@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home</title>
+    <style>
+        h1 {
+            color: rgb(53, 0, 102);
+            font-size: 50px;
+            padding: 10px;
+
+            text-align: center;
+        }
+
+        h2 {
+            color: rgb(53, 0, 102);
+            font-size: 70px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        button {
+            color: rgb(49, 9, 87);
+            background-color: pink;
+            font-size: 20px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        form {
+          display: flex;
+          flex-direction: column;
+          width: 600px;
+          margin: 0 auto;
+      }
+
+      label {
+          margin-top: 3px;
+          font-weight: bold;
+      }
+
+      input {
+          padding: 8px;
+          margin-top: 5px;
+          border: 2px solid #ccc;
+          border-radius: 100px;
+            font-size: 20px;
+      }
+    </style>
+
+</head>
+
+<body>
+
+    <h1>Visão Geral</h1>
+
+    <h2>✨Visão Geral dos usuários✨</h2>
+    <center>
+    <div id="status"> Carregando... </div>
+    <div id="lista">
+
+    </div>
+    <form>
+        <label>Nome:</label>
+        <input type="text" id="Nome" name="nome" required/>
+
+        <label>login:</label>
+        <input type="text" id="login" name="login" required/>
+
+        <label>senha:</label>
+        <input type="number" id="senha" name="senha" required/>
+    </form>
+    
+    <div>
+        <button onclick="mostrarFormulario()"> + Adicionar pessoas</button>
+    </div>
+</center>
+
+    <script>
+        async function carregarPessoas() {
+            const response = await fetch("/pessoas");
+
+            console.log(response);
+
+            const elemento = document.getElementById("status");
+            if (!response.ok) {
+
+                elemento.textContetnt = "Não foi possível carregar as pessoas";
+            }
+            elemento.textContent = "carregado com sucesso";
+           
+            const pessoas = await response.json();
+            console.log("\nResponses: ", response,
+                "\n pessoas", pessoas);
+
+                const container = document.getElementById("lista")
+                const ul = document.createElement('ul')
+                for(let c=0; c<pessoas.lenght; c++){
+                    const pessoa = pessoas[c]
+                    const texto = `NOME: ${pessoa.nome} -- ${pessoas.login}`
+
+                    const li = document.createElement("li");
+                    li.textContent = texto
+                }
+            
+        }
+        carregarPessoas();
+
+
+    </script>
+
+
+</body>
+
+</html>
