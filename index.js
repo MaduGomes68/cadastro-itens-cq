@@ -135,6 +135,30 @@ app.post('/pessoas', (req, res) => {
 
 })
 
+
+app.delete('/pessoa/:id', (req, res) => {
+    
+    const id = parseInt(req.params.id);
+    const pessoa = pessoas.find(p => p.id === id);
+
+    if (!pessoa) {
+        return res.status(404).json({ error: "Usuário não encontrado" });
+    }
+
+    const index = pessoas.findIndex(p => p.id === id);
+
+    if (index !== -1) {
+        pessoas.splice(index, 1);
+        return res.status(200).json({ message: 'Usuário excluído com sucesso' });
+    } else {
+        return res.status(404).json({ message: 'Usuário não encontrado' });
+    }
+});
+
+app.put('/pessoas', (req, res) => {
+    
+})
+
 app.listen(PORT, () => {
     console.log(`Servidor rodando em http://localhost:${PORT}`);
 });

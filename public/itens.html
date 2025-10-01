@@ -78,7 +78,7 @@
             <input type="number" id="senha" name="senha" required /><br><br>
 
 
-<button type="submit" onclick="adicionarPessoa">Adicionar pessoas</button>
+            <button type="submit" onclick="adicionarPessoa">Adicionar pessoas</button>
 
         </form>
 
@@ -88,60 +88,104 @@
     </center>
 
     <script>
-         async function carregarPessoas() {
-        const response = await fetch("/pessoas");
+        async function carregarPessoas() {
+      const response = await fetch("/pessoas");
 
-        //Atualizar div com id = "status"
-        const elemento = document.getElementById("status");
-        if (!response.ok) {
-          elemento.textContent = "Não foi possível carregar as pessoas.";
-        }
-        elemento.textContent = "Pessoas carregadas com sucesso!";
+      //Atualizar div com id = "status"
+      const elemento = document.getElementById("status");
+      if (!response.ok) {
+        elemento.textContent = "Não foi possível carregar as pessoas.";
+      }
+      elemento.textContent = "Pessoas carregadas com sucesso!";
 
-        const pessoas = await response.json();
+      const pessoas = await response.json();
 
-        const container = document.getElementById("lista")
-        const ul = document.createElement('ul')
+      const container = document.getElementById("lista")
+      const ul = document.createElement('ul')
 
-        for(let c=0; c<pessoas.length; c++){
-          const pessoa = pessoas[c]
-          const texto = `NOME: ${pessoa.nome}  -- ${pessoa.login}`
+      for (let c = 0; c < pessoas.length; c++) {
+        const pessoa = pessoas[c]
+        const texto = `NOME: ${pessoa.nome}  -- ${pessoa.login}`;
 
-          const li = document.createElement("li");
-          li.textContent = texto
-          ul.appendChild(li)
-        }
+        const li = document.createElement("li");
+
+        const span = document.createElement("li");
+        span.textContent = texto;
+
+        const botao = document.createElement("button");
+        botao.textContent = "X";
+        botao.style.marginLeft = "10px";
+        botao.onclick = () => deletarPessoa(pessoa.id, li);
+
+        li.appendChild(span);
+        li.appendChild(botao);
+        ul.appendChild(li)
+        //li.textContent = texto
+      
+      }
+      container.appendChild(ul)
+    }
+    carregarPessoas();
+
+    function mostrarFormulario() {
+      const formulario = document.getElementById("formulario")
+      const botao = document.getElementById("botao");
+
+      if (formulario.style.display === "none") {
+        botao.innerText = "➖ Ocultar formulário";
+        formulario.style.display = "block";
+
+      } else {
+        botao.innerText = "➕ Adicionar Pessoa"
+        formulario.style.display = 'none';
+      }
+    }
+
+    function adicionarPessoa(pessoa) {
+      event.preventDefault()
+
+      const nome = document.getElementById("nome").value.trim();
+      const login = document.getElementById("login").value.trim();
+      const senha = document.getElementById("senha").value;
+
+      if (!nome || !senha || !login) {
+        alert("Preencha todos os campos!");
+        return;
+      }
+
+      const novaPessoa = { login, nome };
+
+      const container = document.getElementById("lista");
+      let ul = container.querySelector("ul")
+
+      if (!ul) {
+        ul = document.createElement("ul");
         container.appendChild(ul)
       }
-      carregarPessoas();
 
+      const li = document.createElement("li")
+      li.textContent = `NOME: ${nome} -- ${login}`;
+      ul.appendChild(li);
 
-        function adicionarPessoa(){
-            console.log("Tentando adicionar...")
-        }
-    </script>
-    <script>
+      document.getElementById("formulario").reset();
+      mostrarFormulario();
 
+    }
 
-        function mostrarFormulario() {
-            const formulario = document.getElementById("formulario");
-            const botao = document.getElementById("botao");
-            if (formulario.style.display === "none") {
-                botao.innerText = "Ocultar formulario";
-                formulario.style.display = "block";
-            } else {
-                botao.innerText = "Adicionar pessoas";
-                formulario.style.display = "none";
+        async function deletarPessoa(id, li) {
+        
+            console.log("QUERO APAGAR A PESSOA COM ID = ", id)
+            //if(!confirm("Tem certeza que deseja excluir esta pessoa?")) return;
+            const response = await fetch(`/pessoa/${id}`,{
+                method: "DELETE",
+            });
+            if(response.ok){
+                alert("Pessoa deletada com sucesso!");
+                li.remove()
+            }else{
+                alert("Não foi possivel deletar essa pessoa...");
             }
         }
-
-       function adicionarPessoa(){
-        const nome = document.getElementById("nome").value.trim();
-        const login = document.getElementById("login").value.trim();
-        const senha = document.getElementById("senha").value;
-
-        console.log("NOME: ", nome, "\nLOGIN: ", login, "\nSENHA: ", senha);
-       }
     </script>
 
 
